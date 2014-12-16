@@ -3,7 +3,7 @@
 //Written by: Sarah Min
 
 public class User {
-  
+  //hi
   //Instance variables 
   private String username;
   private String password;
