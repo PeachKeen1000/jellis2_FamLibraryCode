@@ -26,9 +26,7 @@ public class MyBooksTab extends JPanel {
      
   private JLabel addLabel;       private JButton addButton; 
   private JButton removeButton;  private JLabel removeLabel; 
-  
-  
-  
+
   
   //declare buttons and labels 
   

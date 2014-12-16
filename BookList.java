@@ -474,7 +474,7 @@ public class BookList {
   book5.setWantOwn(true);
   book5.setUser("Kate");
   
-  BookList tester = new BookList();
+ BookList tester = new BookList();
   User kate = new User("Kate");
   User jabree = new User("Jabree");
   User sarah = new User("Sarah");

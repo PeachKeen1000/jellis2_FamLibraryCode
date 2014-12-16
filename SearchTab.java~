@@ -30,7 +30,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.LinkedList;  
+import java.util.LinkedList; 
+import java.io.*;
 
 import javafoundations.*;
 import javafoundations.exceptions.*;
@@ -173,6 +174,8 @@ public class SearchTab extends JPanel {
           for(int i = 0; i < searchItems; i++){
             results[i].setText(""); 
           } 
+          
+          noResults.setText(""); 
         
         if(!searchTextField.equals("")) {  
           
@@ -180,7 +183,18 @@ public class SearchTab extends JPanel {
           String type = categoryList[categories.getSelectedIndex()]; 
           String term = searchTextField.getText();
           
+          try {
+          
+          LinkedList<Book> temp = new LinkedList<Book>();
+          temp = mL.listLoader("MasterList.txt", new LinkedList<Book>());                 
+          mL.setFamilyBooks(temp); 
           list = mL.search(type, term); 
+          
+          } catch (FileNotFoundException e) {
+            System.out.println("The txt file containing the collection of" + 
+                                "books could not be found.");
+            noResults.setText("BOOK COLLECTION FILE NOT FOUND"); 
+          }
           
           remainingBooks = list.size(); 
           currentBookIndex = list.size() - remainingBooks; 

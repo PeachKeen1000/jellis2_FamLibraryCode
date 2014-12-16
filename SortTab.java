@@ -135,22 +135,6 @@
 //    
 //  } //ends InputPanel class
 //  
-//  //    private class DisplayPanel extends JPanel {
-////      
-////      public DisplayPanel(){
-////        
-////        setLayout(new GridLayout(1,3); 
-////        //add a previous button
-////                  
-////        //add a next button 
-////        
-////        //Hopefully, we will put the animation here 
-////        
-////        
-////      } //ends DisplayPanel constructor
-////      
-////    } //ends DisplayPanel class
-//  
 //  private class ButtonListener implements ActionListener {
 //    
 //    public void actionPerformed (ActionEvent event) {

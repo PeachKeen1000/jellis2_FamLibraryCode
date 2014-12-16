@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class HomePageTab extends JPanel {
+  private BookList mL; 
   
   private JLabel welcome; 
  
@@ -14,15 +15,22 @@ public class HomePageTab extends JPanel {
   
   private JLabel bookOfDay; 
   
+  private Timer time;
+  
+  private final int delay; 
+  
   //private JButton previous; 
   
   //private JButton next;
   
   //declare buttons and labels 
   
-  public HomePageTab(/*BookList masterlist*/) {
-    setLayout (new BoxLayout(this, BoxLayout.Y_AXIS));
+  public HomePageTab() {
     
+    setLayout (new FlowLayout());
+    
+   // mL = input; 
+  
     //creates the heading labels for the tab; adds the labels to the panel
     welcome = new JLabel("Welcome to Family Library!"); 
     description = new JLabel ("View the family books below.\n"
@@ -30,27 +38,36 @@ public class HomePageTab extends JPanel {
   
     add(welcome); 
     add(description);
-    add(new InputPanel()); 
+    //add(new InputPanel()); 
+    
+    delay = 86400; //The number of seconds in a day
+    
+    ButtonListener listen = new ButtonListener(); 
+      
+    //This timer will perform an action 24 hours. 
+    time = new Timer(delay, listen); 
+    //timer.start(); 
+  
 
   } //ends constructor
-  
-    private class InputPanel extends JPanel {
-    
-    public InputPanel(){
-       //creates the selection for the book for the day
-    //int wildcard = Math.random - indices within the masterList.length 
-    //Book featured = new Book();
-    //featured = masterList.getBook(wildcard);                                
-                     
-//    bookOfDay = new JLabel("Today's book of the day is " + featured.getTitle() +" by " 
-//                          + featured.getAuthor() + ". The book has " + featured.getNumPages() + 
-//                          " pages and is a " + featured.getGenre() + " book.". 
-//      //add(bookOfDay); 
-      
-      
-    } //ends InputPanel constructor
-    
-  } //ends InputPanel class
+//  
+//    private class InputPanel extends JPanel {
+//    
+////  public InputPanel(){
+////    //creates the selection for the book for the day
+////    //int wildcard = Math.random - indices within the masterList.length 
+////    Book featured = new Book();
+////    featured = masterList.getBook(wildcard);                                
+////                     
+////    bookOfDay = new JLabel("Today's book of the day is " + featured.getTitle() +" by " 
+////                          + featured.getAuthor() + ". The book has " + featured.getNumPages() + 
+////                          " pages and is a " + featured.getGenre() + " book.". 
+////    //add(bookOfDay); 
+////      
+//    }
+//    } //ends InputPanel constructor
+//    
+//  } //ends InputPanel class
     
 //    private class DisplayPanel extends JPanel {
 //      
@@ -74,6 +91,7 @@ public class HomePageTab extends JPanel {
     private class ButtonListener implements ActionListener {
       
       public void actionPerformed (ActionEvent event) {
+        
        
       } //ends actionPerformed method
       

@@ -58,11 +58,14 @@ public class OurBooksTab extends JPanel {
   
   private int componentCount; 
   
+  private LinkedList<Book> inputCollection;
+  
   public OurBooksTab(BookList input) {
     setLayout(new FlowLayout(FlowLayout.CENTER)); 
     
     mL = input; 
     componentCount = 0; 
+    inputCollection = new LinkedList<Book>(); 
     
     add(new InputPanel()); 
     
@@ -215,21 +218,20 @@ public class OurBooksTab extends JPanel {
           userBook.setOwn(false); 
           componentCount++; 
         }
-        
-        System.out.println(componentCount); 
+      
         if(componentCount == 6) {
-          try{
-            LinkedList<Book> temp = new LinkedList<Book>();
-            temp = mL.listLoader("MasterList.txt", new LinkedList<Book>()); 
-            System.out.println("Done");                  
-            mL.setFamilyBooks(temp);                      
-            mL.addBook(userBook);
-            mL.saveList(mL.getFamilyBooks(),"MasterList.txt");
+//            LinkedList<Book> temp = new LinkedList<Book>();
+//            temp = mL.listLoader("MasterList.txt", new LinkedList<Book>());                 
+//            mL.setFamilyBooks(temp);                      
+//            mL.addBook(userBook);
+//            LinkedList<Book> toBeSaved = new LinkedList();
+//            toBeSaved.add(userBook); 
+//            System.out.println(mL.toString()); 
+//            mL.saveList(toBeSaved,"MasterList.txt");
+             // = mL.listLoader("MasterList.txt", new LinkedList<Book>());
+            inputCollection.add(userBook); 
+            mL.saveList(inputCollection, "MasterList.txt"); 
             result.setText("The book has been added to the collection.");
-          } catch (FileNotFoundException e) {
-            result.setText("In accessible book collection"); 
-            
-          }
           
         } else {
           
