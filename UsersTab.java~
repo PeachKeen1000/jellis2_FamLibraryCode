@@ -1,0 +1,16 @@
+/** UsersTab Class - Written by: Jabree Ellis
+  * Date Modified: 4 December 2014 
+  */
+import javax.swing.*;
+
+public class UsersTab extends JPanel {
+
+  //declare buttons and labels 
+  
+  public UsersTab() {
+    
+   //include a basic grid format 
+
+  } //ends constructor
+  
+} //ends Users class
