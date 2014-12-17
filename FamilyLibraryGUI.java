@@ -21,16 +21,21 @@ public class FamilyLibraryGUI {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
     
     BookList masterList = new BookList();
+    UserList allUsers = new UserList(); 
+    User test = new User("Test"); 
+    test.setPassword("Test"); 
+    allUsers.addUser(test); 
     
     //adds the tabbed panes and passes prospects as a parameter 
     JTabbedPane tp = new JTabbedPane(); 
     tp.addTab ("HomePage", new HomePageTab(/*masterList*/)); 
     //tp.addTab ("Users", new UsersTab(/*masterList*/));
-   // tp.addTab ("My Books", new MyBooksTab(masterList)); 
-    tp.addTab ("Our Books", new OurBooksTab(masterList)); 
-    tp.addTab ("Search Books", new SearchTab(masterList));
+     tp.addTab ("My Books", new MyBooksTab(masterList, allUsers)); 
+     tp.addTab ("Our Books", new OurBooksTab(masterList)); 
+     tp.addTab ("Search Books", new SearchTab(masterList,allUsers));
+     tp.addTab ("View My Books", new ViewMyBooksTab(masterList, allUsers)); 
     //tp.addTab ("Sort Books", new SortTab(masterList)); 
-    tp.addTab ("WishList", new WishListTab()); 
+    //tp.addTab ("WishList", new WishListTab()); 
    
     frame.getContentPane().add(tp); 
     frame.pack();

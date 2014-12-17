@@ -4,6 +4,7 @@
 
 import java.util.*;
 import java.awt.*;
+import java.io.*; 
 
 public class User {
   
@@ -66,8 +67,85 @@ public class User {
     ourBooks = books;
   }
   
-  public LinkedList <Book> getOurBooks() {
-    return ourBooks;
+  public LinkedList <Book> getOurBooks() throws IOException {
+    Scanner listReader = new Scanner(new File("MasterList.txt"));
+    LinkedList<Book> loadedList=new LinkedList<Book>();
+    
+    try {
+      while(listReader.hasNext()) {
+        Book newbook= new Book();
+        reverseString(listReader, newbook);    
+        loadedList.add(newbook);
+      }
+      
+      for(int i = 0; i < loadedList.size(); i++){
+        if(!loadedList.get(i).getUser().equals(username)){
+          loadedList.remove(i); 
+        }
+      }
+    } catch (RuntimeException e) {
+      System.out.println("Error reading the file");
+      throw e;
+    } finally {
+      listReader.close();
+    }
+    
+    return loadedList;
+  }
+  
+  public Book reverseString(Scanner scanny, Book tempBook) {
+    tempBook.setTitle(scanny.nextLine());
+    tempBook.setAuthFirst(scanny.nextLine());
+    tempBook.setAuthLast(scanny.nextLine());
+    tempBook.setPageLength(Integer.parseInt(scanny.nextLine()));
+    tempBook.setYear(Integer.parseInt(scanny.nextLine()));
+    
+    String genreFind = scanny.nextLine();
+    String[] temp = tempBook.getGenreCollection();
+    for (int x=0; x<temp.length; x++) {
+      if (temp[x].equals(genreFind)) {
+        tempBook.setGenre(x);
+      }
+    }
+    
+    String readingStatfind = scanny.nextLine();
+    for (int x=0; x<tempBook.getReadingStatCollection().length; x++) {
+      if (tempBook.readingStatCollection[x].equals(readingStatfind)) {
+        tempBook.setReadingStat(x);
+      }
+    }
+    
+    String ownTF = scanny.nextLine();
+    if (ownTF.equals("true")) {
+      tempBook.setOwn(true);
+    } else {
+      tempBook.setOwn(false);
+    }
+    
+    String wantOwnTF = scanny.nextLine();
+    if (wantOwnTF.equals("true")) {
+      tempBook.setWantOwn(true);
+    } else {
+      tempBook.setWantOwn(false);
+    } 
+    tempBook.setUser(scanny.nextLine());
+    tempBook.setSecondAuthor(scanny.nextLine());
+    tempBook.setTranslator(scanny.nextLine());
+    tempBook.setEditorName(scanny.nextLine());
+    tempBook.setTag1(scanny.nextLine());
+    tempBook.setTag2(scanny.nextLine());
+    tempBook.setTag3(scanny.nextLine());
+    tempBook.setTag4(scanny.nextLine());
+    tempBook.setTag5(scanny.nextLine());
+    scanny.nextLine();
+    
+    return tempBook;
+  }
+
+  //Jabree: I added this method
+  public void addBook(Book input){
+    ourBooks.add(input); 
+
   }
   
   public String toString () {

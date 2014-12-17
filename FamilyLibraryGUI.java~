@@ -29,7 +29,7 @@ public class FamilyLibraryGUI {
    // tp.addTab ("My Books", new MyBooksTab(masterList)); 
     tp.addTab ("Our Books", new OurBooksTab(masterList)); 
     tp.addTab ("Search Books", new SearchTab(masterList));
-    tp.addTab ("Sort Books", new SortTab(masterList)); 
+    //tp.addTab ("Sort Books", new SortTab(masterList)); 
     tp.addTab ("WishList", new WishListTab()); 
    
     frame.getContentPane().add(tp); 

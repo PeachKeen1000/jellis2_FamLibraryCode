@@ -60,11 +60,14 @@ public class OurBooksTab extends JPanel {
   
   private LinkedList<Book> inputCollection;
   
+  private boolean alreadyPressed; 
+  
   public OurBooksTab(BookList input) {
     setLayout(new FlowLayout(FlowLayout.CENTER)); 
     
     mL = input; 
     componentCount = 0; 
+    alreadyPressed = false; 
     inputCollection = new LinkedList<Book>(); 
     
     add(new InputPanel()); 
@@ -272,11 +275,26 @@ public class OurBooksTab extends JPanel {
          ****************************************************************/
       
         if(componentCount == 7) {
-          
-            inputCollection.add(userBook); 
-            mL.saveList(inputCollection, "MasterList.txt"); 
-            result.setText("The book has been added to the collection.");
-          
+          if(alreadyPressed == false) {
+              try {
+                //the first save list ensures that MasterList has been created
+                inputCollection = mL.listLoader("MasterList.txt", new LinkedList<Book>());
+                inputCollection.add(userBook); 
+                mL.saveList(inputCollection, "MasterList.txt");       
+                result.setText("The book has been added to your collection.");
+                alreadyPressed = true; 
+              } catch (FileNotFoundException e ){
+                System.out.print("Collection file not found"); 
+                
+              }
+              
+            } else {
+ 
+              inputCollection.add(userBook); 
+              mL.saveList(inputCollection, "MasterList.txt");       
+              result.setText("The book has been added to your collection.");
+            }
+  
         } 
         
         /*****************************************************************

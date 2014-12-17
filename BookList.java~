@@ -271,6 +271,14 @@ public class BookList {
    return familyBooks;
   }
   
+  public void setFamBooks(LinkedList<Book> input) {
+    familyBooks = input;
+  }
+  
+   public void setBookList(LinkedList<Book> input) {
+    bookList = input;
+  }
+  
   public Hashtable<User, LinkedList<Book>> addtoHash(UserList ul) {
    // UserList tester = new UserList();
     Iterator<User> iter = ul.getList().iterator();
@@ -470,7 +478,7 @@ public class BookList {
   book5.setWantOwn(true);
   book5.setUser("Kate");
   
-  BookList tester = new BookList();
+ BookList tester = new BookList();
   User kate = new User("Kate");
   User jabree = new User("Jabree");
   User sarah = new User("Sarah");

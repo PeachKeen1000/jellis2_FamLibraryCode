@@ -67,7 +67,7 @@ public class SearchTab extends JPanel {
   
   JLabel[] results = new JLabel[searchItems]; 
   
-  public SearchTab(BookList input) {
+  public SearchTab(BookList input, UserList users) {
     setLayout (new BoxLayout (this, BoxLayout.Y_AXIS)); 
     add(Box.createRigidArea (new Dimension(20,0)));
     
