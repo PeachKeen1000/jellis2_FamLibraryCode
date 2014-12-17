@@ -36,6 +36,7 @@ public class ViewMyBooksTab extends JPanel {
   
   private LinkedList<Book> usersBooks; 
   private Book current; 
+  //we need a current user variable
   
   public ViewMyBooksTab(BookList input, UserList users) {
     setLayout(new FlowLayout(FlowLayout.CENTER)); 
@@ -84,7 +85,7 @@ public class ViewMyBooksTab extends JPanel {
       setLayout (new GridLayout(6,3));
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
-        results[i].setFont(large); 
+        //results[i].setFont(large); 
         
       }   
       

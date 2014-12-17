@@ -22,7 +22,7 @@ public class WishListTab extends JPanel {
   
   
   public WishListTab(/*WishList wl*/) {
-    setLayout (new BoxLayout(this, BoxLayout.Y_AXIS)); 
+     setLayout (new FlowLayout());
     
    //include a basic grid format 
     welcome = new JLabel("WishList!"); 
