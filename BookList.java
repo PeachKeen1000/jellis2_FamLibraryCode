@@ -330,6 +330,19 @@ public class BookList {
     }
   }
   
+  public LinkedList<Book> sortedTreeList(LinkedBinarySearchTree<ComparableWrapper> treetoList) {
+    LinkedList<Book> treeList = new LinkedList<Book>(); 
+    
+    Iterator<ComparableWrapper> iter = treetoList.inorder();
+    while (iter.hasNext()) {
+      treeList.add(iter.next().getBook());
+   }
+    
+    return treeList; 
+
+  }
+ 
+  
   public LinkedList<Book> getWishList(User u, UserList ul) throws IOException {
     LinkedList<Book> wishList = new LinkedList<Book>();
     LinkedList<Book> myBooks = getMyBooks(u, ul);

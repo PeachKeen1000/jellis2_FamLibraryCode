@@ -54,7 +54,7 @@ public class SortTab extends JPanel {
   private int remainingBooks;  
   private Book current; 
   private int currentBookIndex; 
-  private LinkedBinarySearchTree<ComparableWrapper> list; 
+  private LinkedList<Book> list; 
   private Font large = new Font("large", Font.BOLD, 14);
   private final int searchItems = 15; 
   
@@ -157,14 +157,13 @@ public class SortTab extends JPanel {
         String type = categoryList[categories.getSelectedIndex()]; 
         
         if(type.equals("Title")){
-          list = mL.sortByTitle();
+          list = mL.sortedTreeList(mL.sortByTitle());
         } else if (type.equals("Author")){
-          list = mL.sortByAuthor();
+          list = mL.sortedTreeList(mL.sortByAuthor());
         } else if (type.equals("Number of Pages")){
-          list = mL.sortByPageLength(); 
-        } else if (type.equals("Owner")){
-          //have to figure this out...
-          
+          list = mL.sortedTreeList(mL.sortByPageLength());    
+        } else if (type.equals("Genre")){
+          list = mL.genreSorter(); 
         }
         
         remainingBooks = list.size(); 

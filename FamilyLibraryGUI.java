@@ -22,9 +22,9 @@ public class FamilyLibraryGUI {
     
     BookList masterList = new BookList();
     UserList allUsers = new UserList(); 
-    User test = new User("Test"); 
-    test.setPassword("Test"); 
-    allUsers.addUser(test); 
+    User currentUser = new User("Test"); 
+    currentUser.setPassword("Test"); 
+    allUsers.addUser(currentUser); 
     
     //adds the tabbed panes and passes prospects as a parameter 
     JTabbedPane tp = new JTabbedPane(); 
@@ -34,8 +34,8 @@ public class FamilyLibraryGUI {
      tp.addTab ("Our Books", new OurBooksTab(masterList)); 
      tp.addTab ("Search Books", new SearchTab(masterList,allUsers));
      tp.addTab ("View My Books", new ViewMyBooksTab(masterList, allUsers)); 
-    //tp.addTab ("Sort Books", new SortTab(masterList)); 
-    //tp.addTab ("WishList", new WishListTab()); 
+     tp.addTab ("Sort Books", new SortTab(masterList)); 
+    tp.addTab ("WishList", new WishListTab(masterList, allUsers, currentUser)); 
    
     frame.getContentPane().add(tp); 
     frame.pack();

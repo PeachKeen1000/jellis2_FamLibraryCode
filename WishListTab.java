@@ -24,6 +24,7 @@ import java.io.*;
 public class WishListTab extends JPanel {
   private BookList mL; 
   private UserList uL; 
+  private User cu; 
   
   private final Font large = new Font("large", Font.BOLD, 14);
   private final int searchItems = 15; 
@@ -38,10 +39,11 @@ public class WishListTab extends JPanel {
   private Book current; 
   //we need a current user variable
   
-  public WishListTab(BookList input, UserList users) {
+  public WishListTab(BookList input, UserList users, User me) {
     setLayout(new FlowLayout(FlowLayout.CENTER)); 
     mL = input; 
     uL = users; 
+    cu = me; 
     
     for(int i = 0; i < results.length; i++){
       results[i] = new JLabel("", SwingConstants.CENTER); 
@@ -63,7 +65,7 @@ public class WishListTab extends JPanel {
     }
     
     try {
-      usersBooks = mL.getMyBooks(uL.findUser("test"), uL);
+      usersBooks = mL.getWishList(cu, uL); 
     } catch (IOException e){
       System.out.println("Exception caught"); 
     }
