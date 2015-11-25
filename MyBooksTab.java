@@ -13,7 +13,9 @@
   * 
   * 2. http://www.coderanch.com/t/458731/GUI/java/Multi-Line-JLabel
   *     
+  * 3.http://stackoverflow.com/questions/20129221/char-cannot-be-dereferenced-java
   * 
+  * Used to figure out char cannot be dereferenced 
   */
 import java.awt.*;
 import java.awt.event.*;
@@ -24,15 +26,13 @@ import java.io.*;
 public class MyBooksTab extends JPanel {
   private BookList mL; 
   private UserList uL; 
+  private User currentUser; 
+  private final Font large = new Font("large", Font.PLAIN, 16);
+  private LinkedList<Book> inputCollection;
+  private int componentCount; 
   
-  //declare buttons and labels 
-  //variables for finding the user 
-  private JLabel userNameLabel;     private JTextField userNameTextField;
-  private JLabel passwordLabel;     private JTextField passwordTextField;
-  
-  //This method assures that the username/password combination is correct
-  private boolean approved; 
-  
+  //indicates whether the add button has already been pressed or not
+  private boolean alreadyPressed; 
   
   //variables for adding a book
   private JLabel titleAddLabel;        private JTextField titleAddTextField;
@@ -41,13 +41,20 @@ public class MyBooksTab extends JPanel {
   private JLabel yearLabel;            private JTextField yearTextField;
   private JLabel genreLabel;           private JComboBox  genreBox;
   private JLabel pageNumLabel;         private JTextField pageNumTextField; 
-  private JLabel isOwned;              private JComboBox  isOwnedBox; 
+  private JLabel isOwned;              private JComboBox  isOwnedBox;
+  private JLabel tags;                 private JTextField tagsField; 
+  private JLabel readingStat;          private JComboBox statCollection;
+  private JLabel auth2Label;           private JTextField auth2Field;
+  private JLabel transLabel;           private JTextField transField;
+  private JLabel editLabel;            private JTextField editField;
+  
   
   private String[] yes_no = {"Choose an option", "Yes, this book should be my book collection.", 
     "No, I want this book in my wishlist."}; 
   private String[] genreChoices = { "Choose a genre","Reference", "Fantasy", "Science-Fiction", "Fiction/Novels", 
     "Historical-Fiction", "Humor", "Classics", "Biography", "Non-fiction", "Theater", "Poetry", "Comic Books", 
     "Romance", "Miscellaneous"} ;
+  private String[] stats = {"Choose a reading status","have read", "am reading", "want to read"};
   
   private JButton addButton; 
   
@@ -59,24 +66,22 @@ public class MyBooksTab extends JPanel {
   
   private JLabel result; 
   
-  private int componentCount; 
   
-  private LinkedList<Book> inputCollection;
-  
-  //indicates whether the add button has already been pressed or not
-  private boolean alreadyPressed; 
-  
-  public MyBooksTab(BookList input, UserList users) {
-    setLayout(new FlowLayout(FlowLayout.CENTER)); 
+  public MyBooksTab(BookList input, UserList users, User c) {
+    setLayout (new BoxLayout (this, BoxLayout.Y_AXIS));
     
     mL = input; 
     uL = users; 
+    currentUser = c; 
     componentCount = 0; 
-    approved = false; 
     alreadyPressed = false; 
     inputCollection = new LinkedList<Book>(); 
     
+    add(Box.createRigidArea (new Dimension(0,25)));
+    
     add(new InputPanel()); 
+    
+    add(Box.createRigidArea (new Dimension(0,25)));
     
     
     //initialization of labels, buttons, and boxes to remove a book
@@ -108,28 +113,44 @@ public class MyBooksTab extends JPanel {
     
     //constructor 
     public InputPanel() {
-      setLayout (new GridLayout(10,2));
-      
-      //Initializatiions of username/password textfields and labels
-      //Adding those textfields/labels to the panel 
-      
-      userNameLabel = new JLabel("Enter your username: "); 
-      userNameTextField = new JTextField(); 
-      add(userNameLabel); 
-      add(userNameTextField); 
-      passwordLabel = new JLabel("Enter your password"); 
-      passwordTextField = new JTextField(); 
-      add(passwordLabel); 
-      add(passwordTextField); 
+      setLayout (new GridLayout(13,2));
       
       //initialization of labels, buttons, and boxes to add a book 
       titleAddLabel = new JLabel("Title: "); 
+      titleAddLabel.setFont(large);
+      
       authFirstAddLabel = new JLabel("Author's First Name: "); 
-      authLastAddLabel = new JLabel("Author's Last Name: "); 
+      authFirstAddLabel.setFont(large);
+      
+      authLastAddLabel = new JLabel("Author's Last Name: ");
+      authLastAddLabel.setFont(large);
+      
       yearLabel = new JLabel("Year: "); 
+      yearLabel.setFont(large);
+      
       genreLabel = new JLabel ("Genre: "); 
+      genreLabel.setFont(large);
+      
       pageNumLabel = new JLabel ("Number of Pages: "); 
+      pageNumLabel.setFont(large);
+      
       isOwned = new JLabel("Is the book owned?");
+      isOwned.setFont(large);
+      
+      tags = new JLabel("(Opt.)Book tags - Separate with commas."); 
+      tags.setFont(large); 
+      
+      readingStat = new JLabel("(Opt.) Reading Status:"); 
+      readingStat.setFont(large); 
+      
+      auth2Label = new JLabel("(Opt.) Second Author:");
+      auth2Label.setFont(large); 
+      
+      transLabel = new JLabel("(Opt.) Translator:");
+      transLabel.setFont(large); 
+      
+      editLabel = new JLabel("(Opt.) Editor:");
+      editLabel.setFont(large); 
       
       titleAddTextField = new JTextField(); 
       authFirstAddTextField = new JTextField(); 
@@ -138,6 +159,11 @@ public class MyBooksTab extends JPanel {
       genreBox = new JComboBox(genreChoices); 
       pageNumTextField = new JTextField(); 
       isOwnedBox = new JComboBox(yes_no); 
+      tagsField = new JTextField(); 
+      statCollection = new JComboBox(stats); 
+      auth2Field = new JTextField(); 
+      transField = new JTextField(); 
+      editField = new JTextField(); 
       
       addButton = new JButton("Add Book");
       
@@ -158,8 +184,18 @@ public class MyBooksTab extends JPanel {
       add(pageNumTextField); 
       add(isOwned); 
       add(isOwnedBox); 
-      add(addButton);
+      add(tags);
+      add(tagsField); 
+      add(readingStat); 
+      add(statCollection); 
+      add(auth2Label); 
+      add(auth2Field);
+      add(transLabel); 
+      add(transField);
+      add(editLabel);
+      add(editField); 
       
+      add(addButton);
       
       add(result);
       
@@ -175,184 +211,250 @@ public class MyBooksTab extends JPanel {
     public void actionPerformed (ActionEvent event) {
       if(event.getSource() == addButton){
         
-        //before you do anything, make sure the username/password is approve
-        approved = false; 
-        String userNameInput = userNameTextField.getText(); 
-        String passwordInput = passwordTextField.getText(); 
+        result.setText(""); 
         
-        if (uL.containsUser(userNameInput)){
-          if (uL.findUser(userNameInput).getPassword().equals(passwordInput)){
-            approved = true; 
+        if(currentUser != null) {
+
+        Book userBook = new Book(); 
+        
+        //Holds the values of all the user input fields. 
+        String titleInput = titleAddTextField.getText();
+        String authFirstInput = authFirstAddTextField.getText();
+        String authLastInput = authLastAddTextField.getText();
+        String yearInput = yearTextField.getText();
+        String pageLengthInput = pageNumTextField.getText(); 
+        int genreInput = genreBox.getSelectedIndex();
+        int ownedInput = isOwnedBox.getSelectedIndex(); 
+      
+        int statInput = statCollection.getSelectedIndex();
+        String auth2Input = auth2Field.getText();
+        String transInput = transField.getText();
+        String editInput = editField.getText();
+        
+        String [] tagsInput = new String[5]; 
+        String tagString = tagsField.getText(); 
+        
+        for(int i = 0; i < tagsInput.length; i++){
+          tagsInput[i] = ""; 
+          
+        }
+        
+        int start = 0; 
+        int count = 0; 
+        
+        for(int i = 0; (i < tagString.length()) && (count < 5) && (tagString.length() != 0); i++) {
+          int stop = i; 
+          
+          if(tagString.charAt(i) == ',') {
+            tagsInput[count] = tagString.substring(start,stop); 
+            start = stop + 1; 
+            count++; 
+            
+          } else if(i == tagString.length() - 1){
+            tagsInput[count] = tagString.substring(start,stop+1);  
+            count++; 
+            
+          }
+        }
+        
+        /****************************************************************
+          * The following if-conditionals help to ensure that the user 
+          * has input correct information.
+          ****************************************************************/
+        
+        /**********************Checks the title input********************/
+        
+        if(!titleInput.equals("")){
+          userBook.setTitle(titleInput); 
+          componentCount++; 
+        } else {
+          result.setText("Missing: book title");
+          
+        }
+        
+        /******************Checks the author's first name input****************/
+        
+        if(!authFirstInput.equals("")){
+          userBook.setAuthFirst(authFirstInput); 
+          componentCount++; 
+          
+        } else {
+          result.setText("Missing: author's first name");
+          
+        }
+        
+        /******************Checks the author's last name input****************/
+        
+        if(!authLastInput.equals("")){
+          userBook.setAuthLast(authLastInput);
+          componentCount++; 
+          
+        } else {
+          result.setText("Missing: author's last name");
+          
+        }
+        
+        /*************************Checks the year input*********************/
+        
+        if(!yearInput.equals("")){
+          int yearParsed = Integer.parseInt(yearInput);
+          userBook.setYear(yearParsed);
+          
+          if((0 < yearParsed) && (yearParsed < 2015)){
+            componentCount++; 
             
           } else {
-            result.setText("Cannot find user/password"); 
+            result.setText("Missing: valid year input"); 
+          }
+          
+        } else {
+          result.setText("Missing: valid year input"); 
+          
+        }
+        
+        /********************Checks the genre input***********************/
+        
+        if(genreInput != 0) {
+          userBook.setGenre(genreInput-1); 
+          componentCount++; 
+          
+        } else {
+          result.setText("Missing: book genre"); 
+          
+        }
+        
+        /********************Checks page length input***********************/
+        
+        if(!pageLengthInput.equals("")){
+          try {
+            userBook.setPageLength(Integer.parseInt(pageLengthInput)); 
+            componentCount++; 
+            
+          } catch (NumberFormatException e) {
+            result.setText("Missing: proper page number"); 
             
           }
           
         } else {
-          result.setText("Cannot find user/password");
+          result.setText("Missing: Page Number"); 
+          
+        }
+        
+        /************************Checks owner input***********************/
+        
+        if(ownedInput == 1) {
+          userBook.setOwn(true); 
+          userBook.setWantOwn(false); 
+          componentCount++; 
+          
+        } else if (ownedInput == 2){
+          userBook.setOwn(false); 
+          userBook.setWantOwn(true); 
+          componentCount++; 
+          
+        } else {
+          result.setText("Missing: Owner info"); 
+          
+        }
+        
+        userBook.setTag1(tagsInput[0]); 
+        userBook.setTag2(tagsInput[1]); 
+        userBook.setTag3(tagsInput[2]);  
+        userBook.setTag4(tagsInput[3]);  
+        userBook.setTag5(tagsInput[4]);  
+        
+        if(statInput != 0){ 
+          userBook.setReadingStat(statInput-1); 
+          
+        }
+        
+        userBook.setSecondAuthor(auth2Input); 
+        
+        if(!auth2Input.equals("")){  
+          userBook.setSecAuthor(true); 
+          
+        } else {
+          userBook.setSecAuthor(false); 
+          
+        }
+        
+        userBook.setTranslatorName(auth2Input);
+        
+        if(!transInput.equals("")){
+          userBook.setTranslator(true); 
+          
+        } else {
+          userBook.setTranslator(false); 
+          
+        }
+        
+        userBook.setEditorName(auth2Input);
+        
+        if(!editInput.equals("")){
+          userBook.setEditor(true);
+          
+        } else {
+          userBook.setEditor(false);
+          
+        }
+        
+        /****************************************************************
+          * If the user has input all the components correctly, the book 
+          * will be added to the MasterList text file, and the user 
+          * will be notified. 
+          ****************************************************************/
+        //if this button has not been pressed, do a couple of things:
+        //change the variable to true
+        //save the List 
+        
+        if(componentCount == 7) {
+          if(alreadyPressed == false) {
+            try {
+              //attach a user to the book
+              //add the book to the user's collection 
+              
+              //load the master collection with all the books
+              //add the new book to the master collection 
+              //save everything
+              
+              userBook.setUser(currentUser);
+              inputCollection = mL.listLoader("MasterList.txt", new LinkedList<Book>());
+              inputCollection.add(userBook); 
+              currentUser.setBooksRead(currentUser.getBooksRead() + 1); 
+              if(ownedInput == 1) {
+                currentUser.setBooksOwned(currentUser.getBooksOwned() + 1);   
+              }
+              mL.saveList(inputCollection, "MasterList.txt");       
+              result.setText("The book has been added to your collection.");
+              alreadyPressed = true; 
+              
+            } catch (FileNotFoundException e ){
+              System.out.print("Collection file not found"); 
+              
+            }
+            
+          } else {
+            
+            userBook.setUser(currentUser);
+            inputCollection.add(userBook); 
+            mL.saveList(inputCollection, "MasterList.txt");       
+            result.setText("The book has been added to your collection.");  
+            
+          }
           
         } 
         
-        if (approved == true) {
-          Book userBook = new Book(); 
-          
-          //Holds the values of all the user input fields. 
-          String titleInput = titleAddTextField.getText();
-          String authFirstInput = authFirstAddTextField.getText();
-          String authLastInput = authLastAddTextField.getText();
-          String yearInput = yearTextField.getText();
-          String pageLengthInput = pageNumTextField.getText(); 
-          int genreInput = genreBox.getSelectedIndex();
-          int ownedInput = isOwnedBox.getSelectedIndex(); 
-          
-          /****************************************************************
-            * The following if-conditionals help to ensure that the user 
-            * has input correct information.
-            ****************************************************************/
-          
-          /**********************Checks the title input********************/
-          
-          if(!titleInput.equals("")){
-            userBook.setTitle(titleInput); 
-            componentCount++; 
-          } else {
-            result.setText("Missing: book title");
-            
-          }
-          
-          /******************Checks the author's first name input****************/
-          
-          if(!authFirstInput.equals("")){
-            userBook.setAuthFirst(authFirstInput); 
-            componentCount++; 
-            
-          } else {
-            result.setText("Missing: author's first name");
-            
-          }
-          
-          /******************Checks the author's last name input****************/
-          
-          if(!authLastInput.equals("")){
-            userBook.setAuthLast(authLastInput);
-            componentCount++; 
-            
-          } else {
-            result.setText("Missing: author's last name");
-            
-          }
-          
-          /*************************Checks the year input*********************/
-          
-          if(!yearInput.equals("")){
-            int yearParsed = Integer.parseInt(yearInput);
-            userBook.setYear(yearParsed);
-            
-            if((0 < yearParsed) && (yearParsed < 2015)){
-              componentCount++; 
-              
-            } else {
-              result.setText("Missing: valid year input"); 
-            }
-            
-          } else {
-            result.setText("Missing: valid year input"); 
-            
-          }
-          
-          /********************Checks the genre input***********************/
-          
-          if(genreInput != 0) {
-            userBook.setGenre(genreInput); 
-            componentCount++; 
-            
-          } else {
-            result.setText("Missing: book genre"); 
-            
-          }
-          
-          /********************Checks page length input***********************/
-          
-          if(!pageLengthInput.equals("")){
-            try {
-              userBook.setPageLength(Integer.parseInt(pageLengthInput)); 
-              componentCount++; 
-              
-            } catch (NumberFormatException e) {
-              result.setText("Missing: proper page number"); 
-              
-            }
-            
-          } else {
-            result.setText("Missing: Page Number"); 
-            
-          }
-          
-          /************************Checks owner input***********************/
-          
-          if(ownedInput == 1) {
-            userBook.setOwn(true); 
-            userBook.setWantOwn(false); 
-            componentCount++; 
-            
-          } else if (ownedInput == 2){
-            userBook.setOwn(false); 
-            userBook.setWantOwn(true); 
-            componentCount++; 
-            
-          } else {
-            result.setText("Missing: Owner info"); 
-            
-          }
-          
-          /****************************************************************
-            * If the user has input all the components correctly, the book 
-            * will be added to the MasterList text file, and the user 
-            * will be notified. 
-            ****************************************************************/
-          //if this button has not been pressed, do a couple of things
-          //change the variable to true
-          //save the List 
-          
-          if(componentCount == 7) {
-            if(alreadyPressed == false) {
-              try {
-                //attach a user to the book
-                //add the book to the user's collection 
-                
-                //load the master collection with all the books
-                //add the new book to the master collection 
-                //save everything
-                userBook.setUser(userNameInput);
-                inputCollection = mL.listLoader("MasterList.txt", new LinkedList<Book>());
-                inputCollection.add(userBook); 
-                mL.saveList(inputCollection, "MasterList.txt");       
-                result.setText("The book has been added to your collection.");
-                alreadyPressed = true; 
-              } catch (FileNotFoundException e ){
-                System.out.print("Collection file not found"); 
-                
-              }
-              
-            } else {
-              
-              userBook.setUser(userNameInput);
-              inputCollection.add(userBook); 
-              mL.saveList(inputCollection, "MasterList.txt");       
-              result.setText("The book has been added to your collection.");  
-              
-            }
-            
-          } 
-          
-          /*****************************************************************
-            * After everything is evaluated the component count will reset. 
-            ****************************************************************/
-          
-          componentCount = 0; 
+        /*****************************************************************
+          * After everything is evaluated the component count will reset. 
+          ****************************************************************/
+        
+        componentCount = 0; 
+        
+        } else {
+          result.setText("Please log in."); 
           
         }
+        
       } else if (event.getSource().equals(removeButton)) {
         //Ideally, we would like to implement this. 
         

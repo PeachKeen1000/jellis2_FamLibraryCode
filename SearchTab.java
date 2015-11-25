@@ -48,28 +48,30 @@ public class SearchTab extends JPanel {
   
   private JComboBox categories; 
   
-  String[] categoryList = { "Title", "Author", "Genre", "Number of Pages", "Owner" };
+  String[] categoryList = { "Title", "Author", "Owner", "Other"};
   
   private JLabel searchLabel; 
+  private JLabel resultsSection; 
   private JTextField searchTextField;
   
   private JButton submitButton; 
   
   private JButton next;
+  private JButton previous; 
   
   private int remainingBooks;  
   private Book current; 
   private int currentBookIndex; 
   private LinkedList<Book> list; 
   private JLabel noResults; 
-  private Font large = new Font("large", Font.BOLD, 14);
+  private Font large = new Font("large", Font.PLAIN, 16);
   private final int searchItems = 10; 
   
   JLabel[] results = new JLabel[searchItems]; 
   
   public SearchTab(BookList input, UserList users) {
     setLayout (new BoxLayout (this, BoxLayout.Y_AXIS)); 
-    add(Box.createRigidArea (new Dimension(20,0)));
+    add(Box.createRigidArea (new Dimension(0,10)));
     
     //include a basic grid format   
     
@@ -80,11 +82,16 @@ public class SearchTab extends JPanel {
       
     }
     
+    
+    add(Box.createRigidArea (new Dimension(0,25)));
+    
     add(new InputPanel());  
     
-    add(Box.createRigidArea (new Dimension(20,0)));
+    add(Box.createRigidArea (new Dimension(0,50)));
     
     add(new ResultPanel()); 
+    
+    add(Box.createRigidArea (new Dimension(0,50)));
     
     ButtonListener listen = new ButtonListener();
     
@@ -108,10 +115,9 @@ public class SearchTab extends JPanel {
       aligner.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
       
       typeLabel = new JLabel("Choose your search type: "); 
-      
-      add(typeLabel); 
       typeLabel.setFont(large); 
-      
+      add(typeLabel); 
+  
       categories = new JComboBox(categoryList); 
       categories.setRenderer(aligner); 
       
@@ -120,9 +126,8 @@ public class SearchTab extends JPanel {
       searchLabel = new JLabel("Search: ");  add(searchLabel);
       searchLabel.setFont(large); 
       searchTextField = new JTextField();    add(searchTextField);
-      searchTextField.setFont(large); 
       
-      submitButton = new JButton("Submit");  
+      submitButton = new JButton("Submit"); 
       add(submitButton);
       
       noResults = new JLabel("", SwingConstants.CENTER); 
@@ -143,19 +148,23 @@ public class SearchTab extends JPanel {
   private class ResultPanel extends JPanel {
     
     public ResultPanel(){
-      setLayout (new GridLayout(6,2,10,5)); 
+      setLayout (new GridLayout(6,2,20,20)); 
       
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
         results[i].setFont(large); 
-        
+       
       }   
       
-      next = new JButton("Show next books");
+      next = new JButton("Next");
+      
+      previous = new JButton("Previous"); 
       
       add(next);
+      add(previous); 
       
       next.setVisible(false); 
+      previous.setVisible(false); 
       
     } //ends InputPanel constructor
     
@@ -198,7 +207,7 @@ public class SearchTab extends JPanel {
             temp = mL.listLoader("MasterList.txt", new LinkedList<Book>());                 
             mL.setFamBooks(temp); 
             list = mL.search(type, term); 
-            
+       
           } catch (FileNotFoundException e) {
             System.out.println("The txt file containing the collection of" + 
                                "books could not be found.");
@@ -230,7 +239,9 @@ public class SearchTab extends JPanel {
             if(list.size() == 0) {
               noResults.setText("No books found."); 
               noResults.setVisible(true); 
-            }         
+            } 
+            
+            next.setVisible(false); 
             
           } else {
             
@@ -317,6 +328,11 @@ public class SearchTab extends JPanel {
         } //ends the set of methods to be perform if there are at least 10 
         //remaining books
         
+      } else if (event.getSource() == previous){
+   
+
+
+
       } //ends the set out methods to be perform if the pressed button is next
       
     } //ends the actionPerformed method

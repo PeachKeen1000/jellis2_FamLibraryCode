@@ -1,4 +1,4 @@
-/** ViewMyBooksTab Class - Written by: Jabree Ellis
+/** ViewOurBooksTab Class - Written by: Jabree Ellis
   * Date Modified: 16 December 2014 
   * 
   * 
@@ -21,12 +21,11 @@ import javax.swing.*;
 import java.util.*; 
 import java.io.*; 
 
-public class WishListTab extends JPanel {
+public class ViewOurBooksTab extends JPanel {
   private BookList mL; 
   private UserList uL; 
-  private User cu; 
   
-  private final Font large = new Font("large", Font.PLAIN, 16);
+  private final Font large = new Font("large", Font. PLAIN, 14);
   private final Font huge = new Font("large", Font. PLAIN, 20);
   private final int searchItems = 15; 
   JLabel[] results = new JLabel[searchItems]; 
@@ -35,25 +34,31 @@ public class WishListTab extends JPanel {
   private int remainingBooks; 
   private int currentBookIndex; 
   
-  private LinkedList<Book> usersBooks; 
+  private LinkedList<Book> famBooks; 
   private Book current; 
   //we need a current user variable
   
-  public WishListTab(BookList input, UserList users, User me) {
-    setLayout(new FlowLayout(FlowLayout.CENTER)); 
+  public ViewOurBooksTab(BookList input, UserList users) {
+    setLayout(new FlowLayout(FlowLayout.CENTER));
     mL = input; 
     uL = users; 
-    cu = me; 
+    
+    add(Box.createRigidArea (new Dimension(0,20)));
+    Box.createVerticalGlue();
     
     for(int i = 0; i < results.length; i++){
       results[i] = new JLabel("", SwingConstants.CENTER); 
+      results[i].setFont(large);
       
     }
     
     
     try {
       LinkedList<Book> temp = mL.listLoader("MasterList.txt", new LinkedList<Book>()); 
-      mL.setBookList(temp); 
+      mL.setBookList(temp);
+      System.out.println(mL.toString() + "\n"); 
+      famBooks = mL.getFamilyBooks();
+      System.out.println(famBooks.toString()); 
       //System.out.println(uL.findUser("test").getOurBooks()); 
       //System.out.println(mL.toString()  + "\n");
       //System.out.println(uL.toString());
@@ -64,19 +69,13 @@ public class WishListTab extends JPanel {
       System.out.println("The file was not found."); 
     }
     
-    try {
-      usersBooks = mL.getWishList(cu, uL); 
-    } catch (IOException e){
-      System.out.println("Exception caught"); 
-    }
-    //System.out.println(usersBooks);
     current = new Book(); 
     
-    remainingBooks = usersBooks.size(); 
-    currentBookIndex = usersBooks.size() - remainingBooks; 
+    remainingBooks = famBooks.size(); 
+    currentBookIndex = famBooks.size() - remainingBooks; 
     
     add(new InputPanel());
-
+    
   } //ends constructor
   
   private class InputPanel extends JPanel {
@@ -84,10 +83,11 @@ public class WishListTab extends JPanel {
     
     //constructor 
     public InputPanel() {
-      setLayout (new GridLayout(6,3));
+      setLayout (new GridLayout(6,3,0,20));
+      
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
-        results[i].setFont(large); 
+        //results[i].setFont(large); 
         
       }   
       
@@ -95,29 +95,28 @@ public class WishListTab extends JPanel {
       add(next);
       next.setVisible(false); 
       
-       
       ButtonListener listener = new ButtonListener(); 
       next.addActionListener(listener); 
+ 
       
       if(remainingBooks <= searchItems) {
         
-        for(int i = 0; (i < remainingBooks) && (usersBooks.size() != 0); i++){
-          current = usersBooks.get(currentBookIndex); 
+        for(int i = 0; (i < remainingBooks) && (famBooks.size() != 0); i++){
+          current = famBooks.get(currentBookIndex); 
           results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
           
           currentBookIndex ++; 
         } 
         
         next.setVisible(false);
-
+        
         /************************************************************** 
           * If nothing comes up in the search, the user will be told so
           *************************************************************/
         
-        if(usersBooks.size() == 0) {
+        if(famBooks.size() == 0) {
           results[1].setText("No books found."); 
           results[1].setFont(huge); 
-         
         }         
         
       } else {
@@ -129,7 +128,7 @@ public class WishListTab extends JPanel {
         
         for(int i = 0; i < searchItems; i++){
           
-          current = usersBooks.get(currentBookIndex); 
+          current = famBooks.get(currentBookIndex); 
           results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
           
           remainingBooks -- ;    
@@ -149,8 +148,8 @@ public class WishListTab extends JPanel {
     
     public void actionPerformed (ActionEvent event) {
       if(event.getSource() == next) {
-        System.out.println(usersBooks.toString()); 
-     
+        System.out.println(famBooks.toString()); 
+        
         for(int i = 0; i < searchItems; i++){
           results[i].setText(""); 
         } 
@@ -162,19 +161,19 @@ public class WishListTab extends JPanel {
         
         if(remainingBooks <= searchItems) {
           
-          for(int i = 0; (i < remainingBooks) && (usersBooks.size() != 0); i++){
-            current = usersBooks.get(currentBookIndex); 
+          for(int i = 0; (i < remainingBooks) && (famBooks.size() != 0); i++){
+            current = famBooks.get(currentBookIndex); 
             results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
             
             currentBookIndex ++; 
           } 
           
-           next.setVisible(false);
+          next.setVisible(false);
           /************************************************************** 
             * If nothing comes up in the search, the user will be told so
             *************************************************************/
           
-          if(usersBooks.size() == 0) {
+          if(famBooks.size() == 0) {
             results[1].setText("No books found."); 
             results[1].setFont(huge); 
           }         
@@ -188,10 +187,10 @@ public class WishListTab extends JPanel {
           
           for(int i = 0; i < searchItems; i++){
             
-            current = usersBooks.get(currentBookIndex); 
+            current = famBooks.get(currentBookIndex); 
             results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
             
-            remainingBooks -- ;    
+            remainingBooks --;    
             currentBookIndex ++; 
             
           }
@@ -199,11 +198,11 @@ public class WishListTab extends JPanel {
           next.setVisible(true);
           
         }
-
+        
       }
       
     } //ends actionPerformed method
     
   } //ends ButtonListener class
   
-} //ends WishListTab
+} //ends ViewOurBooksTab

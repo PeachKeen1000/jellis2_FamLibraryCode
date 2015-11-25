@@ -61,6 +61,7 @@ public class UserList {
   
   //for testing purposes
   public static void main (String[] args) {
+    BookList bL = new BookList(); 
     User sarah = new User ("sweetnsarah");
     User anita = new User ("anitacarnita");
     UserList test = new UserList();

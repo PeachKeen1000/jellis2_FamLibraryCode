@@ -24,11 +24,12 @@ import java.io.*;
 public class ViewMyBooksTab extends JPanel {
   private BookList mL; 
   private UserList uL; 
+  private User currentUser; 
   
-  private final Font large = new Font("large", Font.BOLD, 14);
+  private final Font large = new Font("large", Font. PLAIN, 16);
+  private final Font huge = new Font("large", Font. PLAIN, 20);
   private final int searchItems = 15; 
   JLabel[] results = new JLabel[searchItems]; 
-  private JLabel noResults; 
   
   private JButton next; 
   private int remainingBooks; 
@@ -38,13 +39,18 @@ public class ViewMyBooksTab extends JPanel {
   private Book current; 
   //we need a current user variable
   
-  public ViewMyBooksTab(BookList input, UserList users) {
-    setLayout(new FlowLayout(FlowLayout.CENTER)); 
+  public ViewMyBooksTab(BookList input, UserList users, User c) {
+    setLayout(new FlowLayout(FlowLayout.CENTER));
     mL = input; 
     uL = users; 
+    currentUser = c; 
+    
+    add(Box.createRigidArea (new Dimension(0,20)));
+    Box.createVerticalGlue();
     
     for(int i = 0; i < results.length; i++){
       results[i] = new JLabel("", SwingConstants.CENTER); 
+      results[i].setFont(large);
       
     }
     
@@ -64,6 +70,8 @@ public class ViewMyBooksTab extends JPanel {
     
     try {
       usersBooks = mL.getMyBooks(uL.findUser("test"), uL);
+      System.out.println(usersBooks); 
+      
     } catch (IOException e){
       System.out.println("Exception caught"); 
     }
@@ -74,7 +82,7 @@ public class ViewMyBooksTab extends JPanel {
     currentBookIndex = usersBooks.size() - remainingBooks; 
     
     add(new InputPanel());
-
+    
   } //ends constructor
   
   private class InputPanel extends JPanel {
@@ -83,6 +91,8 @@ public class ViewMyBooksTab extends JPanel {
     //constructor 
     public InputPanel() {
       setLayout (new GridLayout(6,3));
+      
+      
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
         //results[i].setFont(large); 
@@ -91,57 +101,57 @@ public class ViewMyBooksTab extends JPanel {
       
       next = new JButton("Show next books"); 
       add(next);
-      next.setVisible(false); 
+      next.setVisible(false);  
       
-       
       ButtonListener listener = new ButtonListener(); 
       next.addActionListener(listener); 
       
-      noResults = new JLabel("There are no results."); 
-      add(noResults); 
-      noResults.setVisible(false); 
-                       
-      if(remainingBooks <= searchItems) {
-        
-        for(int i = 0; (i < remainingBooks) && (usersBooks.size() != 0); i++){
-          current = usersBooks.get(currentBookIndex); 
-          results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
+      if(currentUser != null) {
+        if(remainingBooks <= searchItems) {
           
-          currentBookIndex ++; 
-        } 
-        
-        next.setVisible(false);
-
-        /************************************************************** 
-          * If nothing comes up in the search, the user will be told so
-          *************************************************************/
-        
-        if(usersBooks.size() == 0) {
-          noResults.setText("No books found."); 
-          noResults.setVisible(true); 
-        }         
-        
-      } else {
-        
-        /************************************************************** 
-          * If not all of the search items can fit on the screen, these 
-          * statements will be invoked
-          *************************************************************/
-        
-        for(int i = 0; i < searchItems; i++){
+          for(int i = 0; (i < remainingBooks) && (usersBooks.size() != 0); i++){
+            current = usersBooks.get(currentBookIndex); 
+            results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
+            
+            currentBookIndex ++; 
+          } 
           
-          current = usersBooks.get(currentBookIndex); 
-          results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
+          next.setVisible(false);
           
-          remainingBooks -- ;    
-          currentBookIndex ++; 
+          /************************************************************** 
+            * If nothing comes up in the search, the user will be told so
+            *************************************************************/
           
+          if(usersBooks.size() == 0) {
+            results[1].setText("No books found."); 
+            results[1].setFont(huge); 
+          }         
           
+        } else {
+          
+          /************************************************************** 
+            * If not all of the search items can fit on the screen, these 
+            * statements will be invoked
+            *************************************************************/
+          
+          for(int i = 0; i < searchItems; i++){
+            
+            current = usersBooks.get(currentBookIndex); 
+            results[i].setText(current.getTitle() + " by " + current.getAuthFirst() + " " + current.getAuthLast());
+            
+            remainingBooks -- ;    
+            currentBookIndex ++; 
+            
+            
+          }
+          next.setVisible(true);
         }
+ 
+      } else  {
+        results[1].setText("Please log in.");
+        results[1].setFont(large); 
         
-        next.setVisible(true);
-        
-      }
+      } 
       
     }
   } //ends InputPanel class 
@@ -151,7 +161,7 @@ public class ViewMyBooksTab extends JPanel {
     public void actionPerformed (ActionEvent event) {
       if(event.getSource() == next) {
         System.out.println(usersBooks.toString()); 
-     
+        
         for(int i = 0; i < searchItems; i++){
           results[i].setText(""); 
         } 
@@ -170,14 +180,15 @@ public class ViewMyBooksTab extends JPanel {
             currentBookIndex ++; 
           } 
           
-           next.setVisible(false);
+          next.setVisible(false);
           /************************************************************** 
             * If nothing comes up in the search, the user will be told so
             *************************************************************/
           
           if(usersBooks.size() == 0) {
-            noResults.setText("No books found."); 
-            noResults.setVisible(true); 
+            results[1].setText("No books found."); 
+            results[1].setFont(huge); 
+            
           }         
           
         } else {
@@ -200,7 +211,7 @@ public class ViewMyBooksTab extends JPanel {
           next.setVisible(true);
           
         }
-
+        
       }
       
     } //ends actionPerformed method

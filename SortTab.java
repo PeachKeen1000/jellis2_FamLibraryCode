@@ -55,7 +55,7 @@ public class SortTab extends JPanel {
   private Book current; 
   private int currentBookIndex; 
   private LinkedList<Book> list; 
-  private Font large = new Font("large", Font.BOLD, 14);
+  private Font large = new Font("large", Font.PLAIN, 16);
   private final int searchItems = 15; 
   
   JLabel[] results = new JLabel[searchItems]; 
@@ -89,7 +89,7 @@ public class SortTab extends JPanel {
   private class InputPanel extends JPanel {
     
     public InputPanel(){
-      setLayout (new GridLayout(3,2));
+      setLayout (new GridLayout(3,2,5,5));
       
       DefaultListCellRenderer aligner = new DefaultListCellRenderer(); 
       aligner.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
@@ -118,7 +118,7 @@ public class SortTab extends JPanel {
   private class ResultPanel extends JPanel {
     
     public ResultPanel(){
-      setLayout (new GridLayout(6,3,5,5)); 
+      setLayout (new GridLayout(6,3,10,10)); 
       
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
@@ -147,7 +147,7 @@ public class SortTab extends JPanel {
           results[i].setText(""); 
         }
         try {
-          mL.setBookList(mL.listLoader("MasterList.txt",new LinkedList())); 
+          mL.setBookList("MasterList.txt"); 
           
         } catch (FileNotFoundException e) {
           System.out.println("Error"); 
@@ -179,7 +179,7 @@ public class SortTab extends JPanel {
             currentBookIndex ++; 
           }
           
-        } else {
+        } else if (list.size() != 0) {
            //This is where the problem is
           for(int i = 0; i < searchItems; i++){
             current = list.get(currentBookIndex); 

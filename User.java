@@ -9,22 +9,25 @@ import java.io.*;
 public class User {
   
   //Instance variables 
+ // private BookList mL; 
   private String username;
   private String password;
   private int booksOwned;
   private int booksRead;
   private Color identifier; 
-  private WishList wishlist;
-  private LinkedList <Book> ourBooks;
+  private LinkedList<Book> myWishList;
+  private LinkedList <Book> myBooks;
   
   public User (String name) {
+    //mL = input; 
     username = name.toLowerCase();
     password = ""; 
     booksOwned = 0;
     booksRead = 0;
     Random generator = new Random();
     identifier = new Color(generator.nextInt(254), generator.nextInt(254), generator.nextInt(254)); 
-    ourBooks = new LinkedList<Book> ();
+    myBooks = new LinkedList<Book> ();
+    myWishList = new LinkedList<Book>();
   }
   
   public String getUsername() {
@@ -55,97 +58,21 @@ public class User {
     return booksRead;
   }
   
-  public WishList getWishList() {
-    return wishlist;
-  }
   
   public Color getIdentifier() {
     return identifier;
   }
   
   public void setOurBooks(LinkedList <Book> books) {
-    ourBooks = books;
+    myBooks = books;
   }
   
-  public LinkedList <Book> getOurBooks() throws IOException {
-    Scanner listReader = new Scanner(new File("MasterList.txt"));
-    LinkedList<Book> loadedList=new LinkedList<Book>();
-    
-    try {
-      while(listReader.hasNext()) {
-        Book newbook= new Book();
-        reverseString(listReader, newbook);    
-        loadedList.add(newbook);
-      }
-      
-      for(int i = 0; i < loadedList.size(); i++){
-        if(!loadedList.get(i).getUser().equals(username)){
-          loadedList.remove(i); 
-        }
-      }
-    } catch (RuntimeException e) {
-      System.out.println("Error reading the file");
-      throw e;
-    } finally {
-      listReader.close();
-    }
-    
-    return loadedList;
+  public LinkedList <Book> getMyBooks() {
+return myBooks;
   }
   
-  public Book reverseString(Scanner scanny, Book tempBook) {
-    tempBook.setTitle(scanny.nextLine());
-    tempBook.setAuthFirst(scanny.nextLine());
-    tempBook.setAuthLast(scanny.nextLine());
-    tempBook.setPageLength(Integer.parseInt(scanny.nextLine()));
-    tempBook.setYear(Integer.parseInt(scanny.nextLine()));
-    
-    String genreFind = scanny.nextLine();
-    String[] temp = tempBook.getGenreCollection();
-    for (int x=0; x<temp.length; x++) {
-      if (temp[x].equals(genreFind)) {
-        tempBook.setGenre(x);
-      }
-    }
-    
-    String readingStatfind = scanny.nextLine();
-    for (int x=0; x<tempBook.getReadingStatCollection().length; x++) {
-      if (tempBook.readingStatCollection[x].equals(readingStatfind)) {
-        tempBook.setReadingStat(x);
-      }
-    }
-    
-    String ownTF = scanny.nextLine();
-    if (ownTF.equals("true")) {
-      tempBook.setOwn(true);
-    } else {
-      tempBook.setOwn(false);
-    }
-    
-    String wantOwnTF = scanny.nextLine();
-    if (wantOwnTF.equals("true")) {
-      tempBook.setWantOwn(true);
-    } else {
-      tempBook.setWantOwn(false);
-    } 
-    tempBook.setUser(scanny.nextLine());
-    tempBook.setSecondAuthor(scanny.nextLine());
-    tempBook.setTranslator(scanny.nextLine());
-    tempBook.setEditorName(scanny.nextLine());
-    tempBook.setTag1(scanny.nextLine());
-    tempBook.setTag2(scanny.nextLine());
-    tempBook.setTag3(scanny.nextLine());
-    tempBook.setTag4(scanny.nextLine());
-    tempBook.setTag5(scanny.nextLine());
-    scanny.nextLine();
-    
-    return tempBook;
-  }
-
-  //Jabree: I added this method
-  public void addBook(Book input){
-    ourBooks.add(input); 
-
+  public LinkedList<Book> getMyWishList() {
+   return myWishList; 
   }
   
   public String toString () {
@@ -156,9 +83,14 @@ public class User {
   }
   
   //for testing purposes
-  public static void main (String[] args) {
+  public static void main (String[] args) throws IOException {
+    BookList bL = new BookList(); 
+      
     User test1 = new User("SweetnNSarah");
     System.out.println(test1);
+    System.out.println(test1.getMyBooks());
+    
+    
   }  
   
 }

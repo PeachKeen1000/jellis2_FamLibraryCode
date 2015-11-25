@@ -1,16 +1,16 @@
 /** Michelle Gao and Jabree Ellis
- * Assignment 4 
- * Date Modified: 4 October 2014 
- * File Name: GradSchoolsGUI.java 
- * Purpose: Organizes and displays each of the panels within the tabs
- * inside of the main frame
- * 
- * 
- * To do: 
- * Have an option in the JComboBox so that a user can also have the option to
- * 
- * 
- */
+  * Assignment 4 
+  * Date Modified: 4 October 2014 
+  * File Name: GradSchoolsGUI.java 
+  * Purpose: Organizes and displays each of the panels within the tabs
+  * inside of the main frame
+  * 
+  * 
+  * To do: 
+  * Have an option in the JComboBox so that a user can also have the option to
+  * 
+  * 
+  */
 
 import javax.swing.*;
 
@@ -22,21 +22,22 @@ public class FamilyLibraryGUI {
     
     BookList masterList = new BookList();
     UserList allUsers = new UserList(); 
-    User test = new User("Test"); 
-    test.setPassword("Test"); 
-    allUsers.addUser(test); 
+    User currentUser = new User("Test"); 
+    currentUser.setPassword("Test"); 
+    allUsers.addUser(currentUser); 
     
     //adds the tabbed panes and passes prospects as a parameter 
     JTabbedPane tp = new JTabbedPane(); 
-    tp.addTab ("HomePage", new HomePageTab(/*masterList*/)); 
+    tp.addTab ("HomePage", new HomePageTab(masterList)); 
     //tp.addTab ("Users", new UsersTab(/*masterList*/));
-     tp.addTab ("My Books", new MyBooksTab(masterList, allUsers)); 
-     tp.addTab ("Our Books", new OurBooksTab(masterList)); 
-     tp.addTab ("Search Books", new SearchTab(masterList,allUsers));
-     tp.addTab ("View My Books", new ViewMyBooksTab(masterList, allUsers)); 
-    //tp.addTab ("Sort Books", new SortTab(masterList)); 
-    //tp.addTab ("WishList", new WishListTab()); 
-   
+    tp.addTab ("Add to My Books/WishList", new MyBooksTab(masterList, allUsers, currentUser)); 
+    tp.addTab ("View My Books", new ViewMyBooksTab(masterList, allUsers)); 
+    tp.addTab ("View My WishList Books", new WishListTab(masterList, allUsers, currentUser)); 
+    tp.addTab ("Add to Family Books", new OurBooksTab(masterList)); 
+    tp.addTab ("View Family Books", new ViewOurBooksTab(masterList, allUsers)); 
+    tp.addTab ("Search Family Books", new SearchTab(masterList,allUsers));
+    tp.addTab ("Sort Family Books", new SortTab(masterList)); 
+
     frame.getContentPane().add(tp); 
     frame.pack();
     frame.setVisible(true);

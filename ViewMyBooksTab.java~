@@ -25,25 +25,30 @@ public class ViewMyBooksTab extends JPanel {
   private BookList mL; 
   private UserList uL; 
   
-  private final Font large = new Font("large", Font.BOLD, 14);
+  private final Font large = new Font("large", Font. PLAIN, 16);
+  private final Font huge = new Font("large", Font. PLAIN, 20);
   private final int searchItems = 15; 
   JLabel[] results = new JLabel[searchItems]; 
-  private JLabel noResults; 
-  
+
   private JButton next; 
   private int remainingBooks; 
   private int currentBookIndex; 
   
   private LinkedList<Book> usersBooks; 
   private Book current; 
+  //we need a current user variable
   
   public ViewMyBooksTab(BookList input, UserList users) {
-    setLayout(new FlowLayout(FlowLayout.CENTER)); 
+    setLayout(new FlowLayout(FlowLayout.CENTER));
     mL = input; 
     uL = users; 
     
+    add(Box.createRigidArea (new Dimension(0,20)));
+    Box.createVerticalGlue();
+    
     for(int i = 0; i < results.length; i++){
       results[i] = new JLabel("", SwingConstants.CENTER); 
+      results[i].setFont(large);
       
     }
     
@@ -51,15 +56,24 @@ public class ViewMyBooksTab extends JPanel {
     try {
       LinkedList<Book> temp = mL.listLoader("MasterList.txt", new LinkedList<Book>()); 
       mL.setBookList(temp); 
-      System.out.println(mL.toString());
+      //System.out.println(uL.findUser("test").getOurBooks()); 
+      //System.out.println(mL.toString()  + "\n");
+      //System.out.println(uL.toString());
+      //System.out.println(uL.findUser("test").getOurBooks().toString()); 
       
       
     } catch (FileNotFoundException e){
       System.out.println("The file was not found."); 
     }
- 
-    usersBooks = mL.getMyBooks(uL.findUser("test"), uL);
-    System.out.println(usersBooks);
+    
+    try {
+      usersBooks = mL.getMyBooks(uL.findUser("test"), uL);
+      System.out.println(usersBooks); 
+      
+    } catch (IOException e){
+      System.out.println("Exception caught"); 
+    }
+    //System.out.println(usersBooks);
     current = new Book(); 
     
     remainingBooks = usersBooks.size(); 
@@ -75,24 +89,22 @@ public class ViewMyBooksTab extends JPanel {
     //constructor 
     public InputPanel() {
       setLayout (new GridLayout(6,3));
+    
+                       
       for(int i = 0; i < results.length; i++){
         add(results[i]); 
-        results[i].setFont(large); 
+        //results[i].setFont(large); 
         
       }   
       
       next = new JButton("Show next books"); 
       add(next);
-      next.setVisible(false); 
-      
+      next.setVisible(false);  
        
       ButtonListener listener = new ButtonListener(); 
       next.addActionListener(listener); 
       
-      noResults = new JLabel("There are no results."); 
-      add(noResults); 
-      noResults.setVisible(true); 
-                       
+     
       if(remainingBooks <= searchItems) {
         
         for(int i = 0; (i < remainingBooks) && (usersBooks.size() != 0); i++){
@@ -102,13 +114,15 @@ public class ViewMyBooksTab extends JPanel {
           currentBookIndex ++; 
         } 
         
+        next.setVisible(false);
+
         /************************************************************** 
           * If nothing comes up in the search, the user will be told so
           *************************************************************/
         
         if(usersBooks.size() == 0) {
-          noResults.setText("No books found."); 
-          noResults.setVisible(true); 
+          results[1].setText("No books found."); 
+          results[1].setFont(huge); 
         }         
         
       } else {
@@ -160,13 +174,15 @@ public class ViewMyBooksTab extends JPanel {
             currentBookIndex ++; 
           } 
           
+           next.setVisible(false);
           /************************************************************** 
             * If nothing comes up in the search, the user will be told so
             *************************************************************/
           
           if(usersBooks.size() == 0) {
-            noResults.setText("No books found."); 
-            noResults.setVisible(true); 
+            results[1].setText("No books found."); 
+            results[1].setFont(huge); 
+    
           }         
           
         } else {

@@ -1,8 +1,6 @@
 //Started on: December 4, 2014
 //Written by: Kate Puzzanghera
 
-//BUGS THAT NEED TO BE FIXED.  DON'T FORGET
-
 
 
 import java.util.*;
@@ -12,149 +10,58 @@ import java.io.*;
 
 public class BookList { 
   
-  protected LinkedList<Book> bookList;
-//  protected LinkedList<Book> searchResults;
-//  protected LinkedBinarySearchTree<ComparableWrapper> titleSorter;
-//  protected LinkedBinarySearchTree<ComparableWrapper> authorSorter;
-//  protected LinkedBinarySearchTree<ComparableWrapper> yearSorter;
-//  protected LinkedBinarySearchTree<ComparableWrapper> pageSorter;
-  protected LinkedList<Book> familyBooks;
-  protected Hashtable<User, LinkedList<Book>> personalBooks;
+  private LinkedList<Book> bookList;
+  private LinkedList<Book> familyBooks;
+  private Hashtable<User, LinkedList<Book>> personalBooks;
+  private Hashtable<User, LinkedList<Book>> wishlistHash;
+  private UserList userList;
   
   public BookList() {
     bookList=new LinkedList<Book>(); 
-    //searchResults=new LinkedList<Book>();
-// titleSorter = new LinkedBinarySearchTree<ComparableWrapper>();
-// authorSorter= new LinkedBinarySearchTree<ComparableWrapper>();
-// yearSorter= new LinkedBinarySearchTree<ComparableWrapper>();
-// pageSorter= new LinkedBinarySearchTree<ComparableWrapper>();
     familyBooks = new LinkedList<Book>();
     personalBooks=new Hashtable<User, LinkedList<Book>>();
-  }
-  
-  public LinkedList<Book> listLoader(String fileName, LinkedList<Book> reloadedList) throws FileNotFoundException {
-    Scanner listReader = new Scanner(new File(fileName));
-    reloadedList=new LinkedList<Book>();
-    try {
-      while(listReader.hasNext()) {
-        Book newbook= new Book();
-        reverseString(listReader, newbook);    
-        reloadedList.add(newbook);
-      }
-    } catch (RuntimeException e) {
-      System.out.println("Error reading the file");
-      throw e;
-    } finally {
-      listReader.close();
-    }
-    return reloadedList;
-  }
-  
-  public LinkedBinarySearchTree<ComparableWrapper> treeLoader(String fileName, 
-                                                              LinkedBinarySearchTree<ComparableWrapper> reloadedTree, 
-                                                              String treeName) throws FileNotFoundException {
-    
-    Scanner treeReader = new Scanner(new File(fileName));
-    reloadedTree=new LinkedBinarySearchTree<ComparableWrapper>();
-    try {
-      while (treeReader.hasNext()) {
-        Book newbook = new Book(); 
-        reverseString(treeReader, newbook);
-        if (treeName.equals("authorSorter")) {
-          ComparableAuthor newWrap = new ComparableAuthor(newbook);
-          reloadedTree.add(newWrap);
-        }
-        else if (treeName.equals("titleSorter")) {
-          ComparableTitle newWrap = new ComparableTitle(newbook);
-          reloadedTree.add(newWrap);
-        }
-        else if (treeName.equals("yearSorter")) {
-          ComparableYear newWrap = new ComparableYear(newbook);
-          reloadedTree.add(newWrap);
-        } 
-        else if (treeName.equals("pageSorter")) {
-          ComparablePageLength newWrap = new ComparablePageLength(newbook);
-          reloadedTree.add(newWrap);
-        }
-        
-      }
-    } catch (RuntimeException e) {
-      System.out.println("Error reading the file");
-      throw e;
-    }finally {
-      treeReader.close();
-    }
-    return reloadedTree;
+    userList = new UserList();
   }
   
   
-  public Book reverseString(Scanner scanny, Book tempBook) {
-    tempBook.setTitle(scanny.nextLine());
-    tempBook.setAuthFirst(scanny.nextLine());
-    tempBook.setAuthLast(scanny.nextLine());
-    tempBook.setPageLength(Integer.parseInt(scanny.nextLine()));
-    tempBook.setYear(Integer.parseInt(scanny.nextLine()));
-    
-    String genreFind = scanny.nextLine();
-    String[] temp = tempBook.getGenreCollection();
-    for (int x=0; x<temp.length; x++) {
-      if (temp[x].equals(genreFind)) {
-        tempBook.setGenre(x);
-      }
-    }
-    
-    String readingStatfind = scanny.nextLine();
-    for (int x=0; x<tempBook.getReadingStatCollection().length; x++) {
-      if (tempBook.readingStatCollection[x].equals(readingStatfind)) {
-        tempBook.setReadingStat(x);
-      }
-    }
-    
-    String ownTF = scanny.nextLine();
-    if (ownTF.equals("true")) {
-      tempBook.setOwn(true);
-    } else {
-      tempBook.setOwn(false);
-    }
-    
-    String wantOwnTF = scanny.nextLine();
-    if (wantOwnTF.equals("true")) {
-      tempBook.setWantOwn(true);
-    } else {
-      tempBook.setWantOwn(false);
-    } 
-    tempBook.setUser(scanny.nextLine());
-    tempBook.setSecondAuthor(scanny.nextLine());
-    tempBook.setTranslator(scanny.nextLine());
-    tempBook.setEditorName(scanny.nextLine());
-    tempBook.setTag1(scanny.nextLine());
-    tempBook.setTag2(scanny.nextLine());
-    tempBook.setTag3(scanny.nextLine());
-    tempBook.setTag4(scanny.nextLine());
-    tempBook.setTag5(scanny.nextLine());
-    scanny.nextLine();
-    
-    return tempBook;
+  public LinkedList<Book> getBookList() {
+   return bookList; 
   }
-  //OKAY. I think what I now have a book as the value, is supposed to be a LinkedList, but I don't know how to construct
-  //and add to this linked list without making more work than I was before...help...
-  public void addBook(Book newBook, User u) throws IOException {
+  
+    
+  public void setBookList(String fileName) throws IOException {  
+    bookList = listLoader(fileName, bookList);
+  }
+  
+  public UserList getUserList() {
+    return userList;
+  }
+  
+  public void setUserList(UserList ul) {
+    userList = ul;
+  }
+  public void addBook(Book newBook, User u) {
     bookList.add(newBook);
-    u.getOurBooks().add(newBook);
+    u.getMyBooks().add(newBook);
     u.setBooksOwned(u.getBooksOwned()+1);
-    
+    if (newBook.getWantOwn()==true) {
+    u.getMyWishList().add(newBook);
+    } 
+    if (newBook.getOwn()==true) {
+      familyBooks.add(newBook);
+    }
   }
   
   public void removeBook(Book oldBook,User u) {
     bookList.remove(oldBook);
-    //personalBooks.remove(userName, oldBook); 
+    u.getMyBooks().remove(oldBook);
+    u.getMyWishList().remove(oldBook);
     u.setBooksOwned(u.getBooksOwned()-1);
     
   }
   
   public LinkedList<Book> search (String searchType, String searchTerm) {
-    
-    //For initial stuff, I'm only going to allow to search by user, genre, title, author, and tag...that seems like plenty
+
     LinkedList<Book> searchResults = new LinkedList<Book>();
     
     if (searchType.equalsIgnoreCase("title")) {
@@ -195,12 +102,13 @@ public class BookList {
       Iterator<Book> iter = bookList.iterator();
       while (iter.hasNext()){
         Book booky = iter.next();
-        if(booky.getTag1().toUpperCase().contains(searchTerm.toUpperCase()) || 
-           booky.getTag2().toUpperCase().contains(searchTerm.toUpperCase())
-             || booky.getTag3().toUpperCase().contains(searchTerm.toUpperCase()) || 
-           booky.getTag4().toUpperCase().contains(searchTerm.toUpperCase())
-             || booky.getTag4().toUpperCase().contains(searchTerm.toUpperCase())) {
+        if(booky.getTag1().toUpperCase().contains(searchTerm.toUpperCase()) 
+             || booky.getTag2().toUpperCase().contains(searchTerm.toUpperCase())
+             || booky.getTag3().toUpperCase().contains(searchTerm.toUpperCase()) 
+             || booky.getTag4().toUpperCase().contains(searchTerm.toUpperCase())
+             || booky.getTag5().toUpperCase().contains(searchTerm.toUpperCase())) {
           searchResults.add(booky);
+          
         }
       }
       return searchResults;
@@ -220,18 +128,25 @@ public class BookList {
   
   
   
-  public LinkedBinarySearchTree<ComparableWrapper> sortByTitle() { 
+  public LinkedBinarySearchTree<ComparableWrapper> sortByTitle(String fileName) { 
     LinkedBinarySearchTree<ComparableWrapper> titleSorter = new LinkedBinarySearchTree<ComparableWrapper>();
-    Iterator<Book> iter = bookList.iterator();
+    try {
+      return treeLoader(fileName, titleSorter, "titleSorter");
+    } catch (IOException ex) {
+      Iterator<Book> iter = bookList.iterator();
     while (iter.hasNext()) {
       ComparableTitle bookworm = new ComparableTitle(iter.next());
       titleSorter.add(bookworm); 
     }
     return titleSorter; 
   }
+  }
   
-  public LinkedBinarySearchTree<ComparableWrapper> sortByAuthor() {
+  public LinkedBinarySearchTree<ComparableWrapper> sortByAuthor(String fileName) {
     LinkedBinarySearchTree<ComparableWrapper> authorSorter = new LinkedBinarySearchTree<ComparableWrapper>();
+    try {
+      return treeLoader(fileName, authorSorter, "authorSorter");
+    } catch (IOException ex) {
     Iterator<Book> iter = bookList.iterator();
     while (iter.hasNext()) {
       ComparableAuthor bookworm = new ComparableAuthor(iter.next());
@@ -239,9 +154,12 @@ public class BookList {
     }
     return authorSorter;
   }
-  
-  public LinkedBinarySearchTree<ComparableWrapper> sortByYear() {
+  }
+  public LinkedBinarySearchTree<ComparableWrapper> sortByYear(String fileName) {
     LinkedBinarySearchTree<ComparableWrapper> yearSorter = new LinkedBinarySearchTree<ComparableWrapper>();
+    try {
+      return treeLoader(fileName, yearSorter, "yearSorter");
+    } catch (IOException ex) {
     Iterator<Book> iter = bookList.iterator();
     while (iter.hasNext()) {
       ComparableYear bookworm = new ComparableYear(iter.next());
@@ -249,9 +167,12 @@ public class BookList {
     }
     return yearSorter;
   }
-  
-  public LinkedBinarySearchTree<ComparableWrapper> sortByPageLength() {
+  }
+  public LinkedBinarySearchTree<ComparableWrapper> sortByPageLength(String fileName) {
     LinkedBinarySearchTree<ComparableWrapper> pageSorter = new LinkedBinarySearchTree<ComparableWrapper>();
+    try {
+        return treeLoader(fileName, pageSorter, "pageSorter");
+         } catch (IOException ex) {
     Iterator<Book> iter = bookList.iterator();
     while(iter.hasNext()) {
       ComparablePageLength bookworm = new ComparablePageLength(iter.next());
@@ -259,41 +180,57 @@ public class BookList {
     }
     return pageSorter;
   }
+  }
   
-  public LinkedList<Book> getFamilyBooks() {
-    Iterator<Book> iter = bookList.iterator();
-    while(iter.hasNext()) {
-      Book b = iter.next();
-      if (b.getOwn()==true) {
-        familyBooks.add(b);
+   
+  public LinkedList<Book> genreSorter() {
+    LinkedList<Book> genreSorter = new LinkedList<Book>();
+    Book newbook = new Book();
+    for (int x=0; x<14; x++) {
+      String[] temp = newbook.getGenreCollection();
+      String currentGenre = temp[x];
+      Iterator<Book> iter = bookList.iterator();
+      while(iter.hasNext()) {
+        Book currentBook=iter.next();
+        if(currentGenre.equals(currentBook.getGenre())) {
+          genreSorter.add(currentBook);
+        }
       }
     }
+    return genreSorter;
+  }
+  
+  
+  public LinkedList<Book> getFamilyBooks(String fileName)  {
+    try {
+        return listLoader(fileName, familyBooks);
+         } catch (IOException ex) {
+    
     return familyBooks;
+         }
   }
   
-  public void setFamBooks(LinkedList<Book> input) {
-    familyBooks = input;
-  }
-  
-  public void setBookList(LinkedList<Book> input) {
-    bookList = input;
-  }
-  
-  public Hashtable<User, LinkedList<Book>> addtoHash(UserList ul) throws IOException {
-    // UserList tester = new UserList();
+  public Hashtable<User, LinkedList<Book>> addtoHash (UserList ul)  {
+   
     Iterator<User> iter = ul.getList().iterator();
     while (iter.hasNext()) {
       User current = iter.next();
       //  System.out.println(current);
-      personalBooks.put(current, current.getOurBooks());
+     
+      personalBooks.put(current, current.getMyBooks());
+ 
     }
     return personalBooks;
   }
   
-  public LinkedList<Book> getMyBooks(User u, UserList ul) throws IOException {
+  public LinkedList<Book> getPersonalBooks(User u, UserList ul, String fileName)  {
+    try {
+        return listLoader(fileName, u.getMyBooks());
+         } catch (IOException ex) {
+      
     addtoHash(ul);
     return personalBooks.get(u);
-    
+         }
   }
   
   public Book getBookOfTheDay() {
@@ -329,6 +266,119 @@ public class BookList {
       System.out.println("ERROR: We couldn't save your file: " + ex);
     }
   }
+   public LinkedList<Book> listLoader(String fileName, LinkedList<Book> reloadedList) throws FileNotFoundException {
+    Scanner listReader = new Scanner(new File(fileName));
+    reloadedList=new LinkedList<Book>();
+    try {
+      while(listReader.hasNext()) {
+        Book newbook= new Book();
+        reverseString(listReader, newbook, getUserList());    
+        reloadedList.add(newbook);
+      }
+    } catch (RuntimeException e) {
+      System.out.println("Error reading the file");
+      throw e;
+    } finally {
+      listReader.close();
+    }
+    return reloadedList;
+  }
+  
+  public LinkedBinarySearchTree<ComparableWrapper> treeLoader(String fileName, 
+                                                              LinkedBinarySearchTree<ComparableWrapper> reloadedTree, 
+                                                              String treeName) throws FileNotFoundException {
+    
+    Scanner treeReader = new Scanner(new File(fileName));
+    reloadedTree=new LinkedBinarySearchTree<ComparableWrapper>();
+    try {
+      while (treeReader.hasNext()) {
+        Book newbook = new Book(); 
+        reverseString(treeReader, newbook, getUserList());
+        if (treeName.equals("authorSorter")) {
+          ComparableAuthor newWrap = new ComparableAuthor(newbook);
+          reloadedTree.add(newWrap);
+        }
+        else if (treeName.equals("titleSorter")) {
+          ComparableTitle newWrap = new ComparableTitle(newbook);
+          reloadedTree.add(newWrap);
+        }
+        else if (treeName.equals("yearSorter")) {
+          ComparableYear newWrap = new ComparableYear(newbook);
+          reloadedTree.add(newWrap);
+        } 
+        else if (treeName.equals("pageSorter")) {
+          ComparablePageLength newWrap = new ComparablePageLength(newbook);
+          reloadedTree.add(newWrap);
+        }
+        
+      }
+    } catch (RuntimeException e) {
+      System.out.println("Error reading the file");
+      throw e;
+    }finally {
+      treeReader.close();
+    }
+    return reloadedTree;
+  }
+  
+  
+  public Book reverseString(Scanner scanny, Book tempBook, UserList ul) {
+    tempBook.setTitle(scanny.nextLine());
+    tempBook.setAuthFirst(scanny.nextLine());
+    tempBook.setAuthLast(scanny.nextLine());
+    tempBook.setPageLength(Integer.parseInt(scanny.nextLine()));
+    tempBook.setYear(Integer.parseInt(scanny.nextLine()));
+    
+    String genreFind = scanny.nextLine();
+    String[] temp = tempBook.getGenreCollection();
+    for (int x=0; x<temp.length; x++) {
+      if (temp[x].equals(genreFind)) {
+        tempBook.setGenre(x);
+      }
+    }
+    
+    String readingStatfind = scanny.nextLine();
+    String [] tempStat = tempBook.getReadingStatCollection();
+    for (int x=0; x<tempStat.length; x++) {
+      if (tempStat[x].equals(readingStatfind)) {
+        tempBook.setReadingStat(x);
+      }
+    }
+    
+    String ownTF = scanny.nextLine();
+    if (ownTF.equals("true")) {
+      tempBook.setOwn(true);
+    } else {
+      tempBook.setOwn(false);
+    }
+    
+    String wantOwnTF = scanny.nextLine();
+    if (wantOwnTF.equals("true")) {
+      tempBook.setWantOwn(true);
+    } else {
+      tempBook.setWantOwn(false);
+    } 
+    
+    tempBook.setUser(userList.findUser(scanny.nextLine()));
+  
+
+    tempBook.setSecondAuthor(scanny.nextLine());
+    String translatorTF = scanny.nextLine();
+    if (translatorTF.equals("true")) {
+       tempBook.setTranslator(true);
+    } else {
+      tempBook.setTranslator(false);
+    }
+    tempBook.setEditorName(scanny.nextLine());
+    tempBook.setTag1(scanny.nextLine());
+    tempBook.setTag2(scanny.nextLine());
+    tempBook.setTag3(scanny.nextLine());
+    tempBook.setTag4(scanny.nextLine());
+    tempBook.setTag5(scanny.nextLine());
+    scanny.nextLine();
+    
+    return tempBook;
+  }
   
   public LinkedList<Book> sortedTreeList(LinkedBinarySearchTree<ComparableWrapper> treetoList) {
     LinkedList<Book> treeList = new LinkedList<Book>(); 
@@ -341,38 +391,28 @@ public class BookList {
     return treeList; 
 
   }
- 
-  
-  public LinkedList<Book> getWishList(User u, UserList ul) throws IOException {
-    LinkedList<Book> wishList = new LinkedList<Book>();
-    LinkedList<Book> myBooks = getMyBooks(u, ul);
-    Iterator<Book> iter = myBooks.iterator();
+  public Hashtable<User, LinkedList<Book>> addtoWishHash (UserList ul) throws IOException {
+   
+    Iterator<User> iter = ul.getList().iterator();
     while (iter.hasNext()) {
-      Book currentBook = iter.next();
-      if (currentBook.getWantOwn()==true) {
-        wishList.add(currentBook);
-      }
+      User current = iter.next();
+      //  System.out.println(current);
+     
+      wishlistHash.put(current, current.getMyWishList());
+ 
     }
-    return wishList;
-  }
+    return wishlistHash;
+  } 
   
-  public LinkedList<Book> genreSorter() {
-    LinkedList<Book> genreSorter = new LinkedList<Book>();
-    Book newbook = new Book();
-    for (int x=0; x<14; x++) {
-      String[] temp = newbook.getGenreCollection();
-      String currentGenre = temp[x];
-      Iterator<Book> iter = bookList.iterator();
-      while(iter.hasNext()) {
-        Book currentBook=iter.next();
-        if(currentGenre.equals(currentBook.getGenre())) {
-          genreSorter.add(currentBook);
-        }
-      }
-    }
-    return genreSorter;
+  public LinkedList<Book> getWishList(User u, UserList ul, String fileName) throws IOException { 
+    try {
+        return listLoader(fileName, u.getMyWishList());
+         } finally {
+  addtoWishHash(ul);
+  return wishlistHash.get(u);
   }
-  
+         }
+ 
   
   
   //TESTING CODE
@@ -441,7 +481,7 @@ public class BookList {
     book1.setTag4("");
     book1.setTag5("");
     book1.setOwn(true);
-    book1.setUser("Sarah");
+ 
     
     Book book2 = new Book();
     book2.setTitle("The Lion, the Witch, and the Wardrobe");
@@ -456,7 +496,7 @@ public class BookList {
     book2.setTag4("Children's Book");
     book2.setTag5("");
     book2.setOwn(true);
-    book2.setUser("Jabree");
+    
     
     Book book3 = new Book();
     book3.setTitle("My Sister's Keeper");
@@ -467,7 +507,7 @@ public class BookList {
     book3.setGenre(3);
     book3.setOwn(false);
     book3.setWantOwn(true);
-    book3.setUser("Sarah");
+ 
     
     Book book4 = new Book();
     book4.setTitle("The Other Boleyn Girl");
@@ -477,8 +517,7 @@ public class BookList {
     book4.setGenre(3);
     book4.setYear(2002);
     book4.setOwn(true);
-    book4.setUser("Kate");
-    
+      
     Book book5 = new Book();
     book5.setTitle("Mere Christianity");
     book5.setAuthFirst("C.S.");
@@ -489,8 +528,7 @@ public class BookList {
     book5.setAuthLast("Lewis");
     book5.setOwn(false);
     book5.setWantOwn(true);
-    book5.setUser("Kate");
-    
+  
     BookList tester = new BookList();
     User kate = new User("Kate");
     User jabree = new User("Jabree");

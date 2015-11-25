@@ -33,6 +33,15 @@ public class UserList {
     }
     return false;
   }
+  
+  public User findUser(String username) {
+    for (int i = 0; i < list.size(); i++) {
+      if (username.equals(list.get(i).getUsername())) {
+        return list.get(i);
+      } 
+    }
+    return null;
+  }
     
   public int getSize() {
     return list.size();
@@ -52,8 +61,9 @@ public class UserList {
   
   //for testing purposes
   public static void main (String[] args) {
-    User sarah = new User ("sweetnsarah");
-    User anita = new User ("anitacarnita");
+    BookList bL = new BookList(); 
+    User sarah = new User ("sweetnsarah",bL);
+    User anita = new User ("anitacarnita",bL);
     UserList test = new UserList();
     test.addUser(sarah);
     test.addUser(anita);
